@@ -1,0 +1,17 @@
+{
+  "version": "2.0",
+  "app_name": "chalice-chatbot",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api",
+      "environment_variables": {
+        "AWS_REGION": "us-west-2",
+        "LEX_BOT_NAME": "YourLexBotName",
+        "TRANSLATE_SOURCE_LANGUAGE": "en",
+        "TRANSLATE_TARGET_LANGUAGE": "es",
+        "POLLY_VOICE_ID": "Joanna",
+        "DYNAMODB_TABLE": "YourDynamoDBTableName"
+      }
+    }
+  }
+}

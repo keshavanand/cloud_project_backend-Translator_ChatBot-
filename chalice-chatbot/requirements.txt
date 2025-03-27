@@ -1,0 +1,8 @@
+chalice
+boto3
+Flask
+requests
+pydantic
+python-dotenv
+pytest
+pytest-mock
