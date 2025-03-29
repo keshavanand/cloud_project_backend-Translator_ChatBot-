@@ -1,29 +1,36 @@
 from boto3 import resource
+import uuid
 
+DYNAMODB_TABLE = 'DYNAMODB_TABLE' 
 dynamodb = resource('dynamodb')
-table_name = 'YourDynamoDBTableName'  # Replace with your actual DynamoDB table name
-table = dynamodb.Table(table_name)
+table = dynamodb.Table(DYNAMODB_TABLE)
 
 def put_item(item):
-    response = table.put_item(Item=item)
-    return response
+    return table.put_item(Item=item)
 
 def get_item(key):
-    response = table.get_item(Key=key)
-    return response.get('Item')
+    return table.get_item(Key=key).get('Item')
 
 def update_item(key, update_expression, expression_attribute_values):
-    response = table.update_item(
+    return table.update_item(
         Key=key,
         UpdateExpression=update_expression,
         ExpressionAttributeValues=expression_attribute_values
     )
-    return response
 
 def delete_item(key):
-    response = table.delete_item(Key=key)
-    return response
+    return table.delete_item(Key=key)
 
 def scan_table():
-    response = table.scan()
-    return response.get('Items')
+    return table.scan().get('Items')
+
+def save_conversation(user_input, bot_response):
+    item = {
+        "id": str(uuid.uuid4()),
+        'UserInput': user_input,
+        'BotResponse': bot_response
+    }
+    return put_item(item)
+
+def get_conversation(user_input):
+    return get_item({'UserInput': user_input})

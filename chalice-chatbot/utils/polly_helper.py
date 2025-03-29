@@ -10,7 +10,6 @@ class PollyHelper:
             VoiceId=voice_id,
             OutputFormat=output_format
         )
-        
         if 'AudioStream' in response:
             audio_stream = response['AudioStream'].read()
             return audio_stream
@@ -20,3 +19,6 @@ class PollyHelper:
     def list_voices(self):
         response = self.polly_client.describe_voices()
         return response['Voices']
+
+    def text_to_speech(self, text, voice_id="Joanna", output_format="mp3"):
+        return self.synthesize_speech(text, voice_id, output_format)
