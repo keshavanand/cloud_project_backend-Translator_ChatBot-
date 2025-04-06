@@ -9,8 +9,12 @@ import os
 
 app = Chalice(app_name="chalice-chatbot")
 
-# # Load environment variables
+# Load environment variables
+LEX_BOT_NAME = os.environ.get("LEX_BOT_NAME", "TranslatorChatBotLogs")
+LEX_BOT_ALIAS = os.environ.get("LEX_BOT_ALIAS", "YourLexBotAlias")
 POLLY_VOICE_ID = os.environ.get("POLLY_VOICE_ID", "Joanna")
+DYNAMODB_TABLE = os.environ.get("DYNAMODB_TABLE", "DYNAMODB_TABLE")
+LOG_STREAM_NAME = os.environ.get("LOG_STREAM_NAME", "ChatEventsStream")
 
 @app.route("/chat", methods=["POST"])
 def chat():
