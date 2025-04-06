@@ -5,6 +5,7 @@ import re
 from botocore.exceptions import BotoCoreError, ClientError
 from utils.cloudwatch_helper import CloudWatchHelper
 
+# Initialize clients
 translate = boto3.client('translate')
 
 cloudwatch = CloudWatchHelper(
@@ -13,12 +14,11 @@ cloudwatch = CloudWatchHelper(
 )
 
 def split_sentences(text):
+    """Split input text into sentences."""
     return re.split(r'(?<=[.!?])\s+|\n+', text.strip())
 
 def translate_text(text, source_language, target_language, max_retries=3, delay=1.0):
-    """
-    Translates multi-sentence text with retries and logs failures to CloudWatch.
-    """
+    """Translate multi-sentence text with retries and logs."""
     if not text:
         cloudwatch.log_event("TranslateText: Empty input received.")
         return ""
@@ -42,7 +42,6 @@ def translate_text(text, source_language, target_language, max_retries=3, delay=
                 translated_sentences.append(translated)
                 cloudwatch.log_event(f"Translated successfully: '{sentence}' ➝ '{translated}'")
                 break  # Success
-
             except (BotoCoreError, ClientError) as e:
                 log_message = f"[Retry {attempt+1}] Failed to translate: '{sentence}' | Error: {str(e)}"
                 cloudwatch.log_event(log_message)
@@ -54,3 +53,16 @@ def translate_text(text, source_language, target_language, max_retries=3, delay=
             translated_sentences.append("[Translation failed]")
 
     return " ".join(translated_sentences)
+
+def detect_language(text):
+    """Detect dominant language from input text."""
+    try:
+        response = translate.detect_dominant_language(Text=text)
+        languages = response.get('Languages', [])
+        if languages:
+            return languages[0]['LanguageCode']
+        else:
+            return None
+    except (BotoCoreError, ClientError) as e:
+        cloudwatch.log_event(f"DetectLanguage Error: {str(e)}")
+        return None
