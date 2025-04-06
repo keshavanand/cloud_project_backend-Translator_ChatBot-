@@ -6,6 +6,7 @@ from utils.lex_helper import LexHelper
 from utils.polly_helper import PollyHelper
 from utils.cloudwatch_helper import CloudWatchHelper
 import os
+import base64
 
 app = Chalice(app_name="chalice-chatbot")
 
@@ -46,8 +47,14 @@ def chat():
     # Save conversation in DynamoDB
     save_conversation(user_input, translated_response)
 
+
+
     # Convert response to audio
     polly_helper = PollyHelper()
     audio_response = polly_helper.text_to_speech(translated_response, voice_id=POLLY_VOICE_ID)
 
     return {"response": translated_response, "audio": str(audio_response)}
+
+      # New code added
+    audio_b64 = base64.b64encode(audio_response).decode("utf-8")
+    return {"response": translated_response,"audio": f"data:audio/mp3;base64,{audio_b64}"}
